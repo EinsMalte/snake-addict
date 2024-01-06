@@ -45,7 +45,7 @@ food_pos = [random.randrange(1, (window_width // snake_block_size)) * snake_bloc
 # RPG mechanics
 snake_xp = 0
 snake_level = 1
-required_xp = 10
+required_xp = 50
 
 # Set up the game loop
 game_over = False
@@ -116,7 +116,7 @@ while not game_over:
         snake_level += 1
         snake_xp = 0
         snake_speed += 1
-        required_xp += 50  # Increase the required XP for the next level
+        required_xp += 10  # Increase the required XP for the next level
         level_up_sound.play()  # Play the level up sound
         level_up_animation = True  # Start the animation
         speakAfterTime(f"{int(snake_level)}", 6000)
