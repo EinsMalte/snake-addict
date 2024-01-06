@@ -3,6 +3,7 @@ import random
 import threading
 import pyttsx3 # how to install: pip install pyttsx3
 import json
+import textwrap
 
 #load the texts ffrom level_up_text.json
 level_texts = json.load(open("level_up_text.json", "r"))
@@ -158,23 +159,38 @@ while not game_over:
     window.blit(xp_text, (10, 10))
     window.blit(level_text, (10, 50))
 
-    # Draw the subtitle and center it on the bottom half of the screen
-    font = pygame.font.Font(None, 36)
-    subtitle_text = font.render(subtitle, True, white)
-    subtitle_text_rect = subtitle_text.get_rect()
-    subtitle_text_rect.center = (window_width / 2, window_height / 2 + window_height / 4)
-    window.blit(subtitle_text, subtitle_text_rect)
+    if(subtitle != ""):
+        # Define the maximum width for the subtitle
+        max_subtitle_width = window_width * 2 // 3
 
-    # Level up animation
-    if level_up_animation:
-        animation_counter += 1
-        if animation_counter <= animation_duration:
-            # Shitty animation
-            for segment in snake_list:
-                pygame.draw.rect(window, random.choice(animation_colors), [segment[0], segment[1], snake_block_size, snake_block_size])
-        else:
-            level_up_animation = False
-            animation_counter = 0
+        # Wrap the subtitle text to fit within the maximum width
+        wrapped_subtitle = textwrap.wrap(subtitle, width=max_subtitle_width)
+
+        # Draw the wrapped subtitle and center it on the bottom half of the screen
+        font = pygame.font.Font(None, 24)
+        subtitle_lines = []
+        for line in wrapped_subtitle:
+            subtitle_line = font.render(line, True, white)
+            subtitle_lines.append(subtitle_line)
+
+        subtitle_height = len(subtitle_lines) * subtitle_lines[0].get_height()
+        subtitle_y = window_height / 2 + window_height / 4 - subtitle_height / 2
+
+        for i, line in enumerate(subtitle_lines):
+            subtitle_line_rect = line.get_rect()
+            subtitle_line_rect.center = (window_width / 2, subtitle_y + i * subtitle_line_rect.height)
+            window.blit(line, subtitle_line_rect)
+
+        # Level up animation
+        if level_up_animation:
+            animation_counter += 1
+            if animation_counter <= animation_duration:
+                # Shitty animation
+                for segment in snake_list:
+                    pygame.draw.rect(window, random.choice(animation_colors), [segment[0], segment[1], snake_block_size, snake_block_size])
+            else:
+                level_up_animation = False
+                animation_counter = 0
 
     # Update the display
     pygame.display.update()
