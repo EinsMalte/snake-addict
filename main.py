@@ -71,20 +71,27 @@ animation_colors = [(255, 0, 0), (0, 255, 0), (0, 0, 255)]  # Flashy colors for 
 
 subtitle = ""
 
+speakThread = None
+
 def speakAfterTime(text, time):
     def speak():
         global subtitle
+        level = int(snake_level + 0) # clone the level
         subtitle = "You have reached level " + str(snake_level) + "!"
         pygame.time.wait(time)
         for text in level_texts[str(snake_level)]:
             print(text)
             subtitle = text["text"]
-            engine.say(text["text"])
+            engine.say(text["text"]) # not on MacOS because Tim Apple said no
             engine.runAndWait()
             pygame.time.wait(100) # wait 100ms between each text
+            if(level != snake_level):
+                break
         subtitle = ""
-
-    threading.Thread(target=speak).start()
+    global speakThread
+    if speakThread != None:
+        speakThread.join()
+    speakThread = threading.Thread(target=speak).start()
 
 # Game loop
 while not game_over:
